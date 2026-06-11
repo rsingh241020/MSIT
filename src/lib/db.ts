@@ -33,6 +33,7 @@ export async function connectToDatabase() {
       .connect(MONGODB_URI, {
         dbName: DB_NAME,
         bufferCommands: false,
+        serverSelectionTimeoutMS: 10000,
       })
       .catch((error) => {
         cached.promise = null;

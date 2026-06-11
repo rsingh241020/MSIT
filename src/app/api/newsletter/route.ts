@@ -5,6 +5,8 @@ import { connectToDatabase } from "@/lib/db";
 import { newsletterSchema } from "@/lib/validations";
 import { NewsletterSubscription } from "@/models/newsletter-subscription";
 
+export const runtime = "nodejs";
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -32,6 +34,13 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
+
+    console.error("Newsletter API error", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      hasMongoUri: Boolean(process.env.MONGODB_URI),
+      dbName: process.env.MONGODB_DB_NAME || "msit-systems",
+    });
 
     return NextResponse.json({ error: "Something went wrong while saving the subscription." }, { status: 500 });
   }
