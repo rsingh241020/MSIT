@@ -12,7 +12,7 @@ export function CareersPreviewSection() {
         <SectionHeading
           eyebrow="Careers"
           title="Join a team building modern digital systems with intention."
-          description="We’re hiring engineers and designers who care about quality, product thinking, and collaborative execution."
+          description="We're hiring engineers and designers who care about quality, product thinking, and collaborative execution."
         />
         <div className="mt-10 grid gap-4 lg:grid-cols-2">
           {jobs.slice(0, 4).map((job) => (

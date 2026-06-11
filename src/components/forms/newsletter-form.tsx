@@ -15,20 +15,24 @@ export function NewsletterForm() {
     setMessage(null);
 
     startTransition(async () => {
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      try {
+        const res = await fetch("/api/newsletter", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
 
-      const payload = await res.json();
-      if (!res.ok) {
-        setMessage(payload.error || "Unable to subscribe right now.");
-        return;
+        const payload = await res.json().catch(() => null);
+        if (!res.ok) {
+          setMessage(payload?.error || "Unable to subscribe right now.");
+          return;
+        }
+
+        setMessage("Subscribed successfully. You'll hear from us when we publish updates.");
+        setEmail("");
+      } catch {
+        setMessage("Unable to subscribe right now. Please try again in a moment.");
       }
-
-      setMessage("Subscribed successfully. You'll hear from us when we publish updates.");
-      setEmail("");
     });
   };
 

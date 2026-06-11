@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 
 import { connectToDatabase } from "@/lib/db";
 import { newsletterSchema } from "@/lib/validations";
@@ -21,9 +22,15 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (error) {
-    if (error instanceof Error && "issues" in error) {
-      const issues = (error as { issues?: Array<{ message: string }> }).issues;
-      return NextResponse.json({ error: issues?.[0]?.message || "Validation failed." }, { status: 400 });
+    if (error instanceof SyntaxError) {
+      return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+    }
+
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        { error: error.issues[0]?.message || "Validation failed." },
+        { status: 400 },
+      );
     }
 
     return NextResponse.json({ error: "Something went wrong while saving the subscription." }, { status: 500 });

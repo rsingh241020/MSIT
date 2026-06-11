@@ -25,22 +25,26 @@ export function ContactForm() {
     setResponse(null);
 
     startTransition(async () => {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
 
-      const payload = await res.json();
-      if (!res.ok) {
-        setResponse(payload.error || "Unable to send your message right now.");
-        return;
+        const payload = await res.json().catch(() => null);
+        if (!res.ok) {
+          setResponse(payload?.error || "Unable to send your message right now.");
+          return;
+        }
+
+        setResponse(
+          "Your message has been received. Our team will connect with you shortly.",
+        );
+        setFormData(initialState);
+      } catch {
+        setResponse("Unable to send your message right now. Please try again in a moment.");
       }
-
-      setResponse(
-        "Your message has been received. Our team will connect with you shortly.",
-      );
-      setFormData(initialState);
     });
   };
 
@@ -149,7 +153,7 @@ export function ContactForm() {
             </option>
           </select>
           <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-slate-400">
-            ▾
+            &#9662;
           </span>
         </div>
       </label>
